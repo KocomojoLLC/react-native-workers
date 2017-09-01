@@ -1,3 +1,17 @@
+apply plugin: 'maven'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.0'
+    }
+}
+
+
+
 apply plugin: 'com.android.library'
 
 android {
@@ -18,12 +32,32 @@ android {
 repositories {
    mavenLocal()
    jcenter()
-   maven {
-       // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-       url "$rootDir/../node_modules/react-native/android"
-   }
+
+        maven {
+            url 'https://raw.githubusercontent.com/KocomojoLLC/KocomojoSDK-Android/master'
+            credentials {
+                username "$mavenUser"
+                password "$mavenPassword"
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
 }
 
 dependencies {
     compile 'com.facebook.react:react-native:+'
 }
+
+uploadArchives {
+    repositories.mavenDeployer {
+        def deployPath = file(getProperty('aar.deployPath'))
+        repository(url: "file://${deployPath.absolutePath}")
+        pom.project {
+            groupId 'com.apptailor'
+            artifactId 'react-native-workers'
+            version "0.3.1"
+        }
+    }
+}
+
