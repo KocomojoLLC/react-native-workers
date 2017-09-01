@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.cxxbridge.JSBundleLoader;
@@ -29,7 +30,6 @@ import okhttp3.Response;
 import okio.Okio;
 import okio.Sink;
 
-
 public class WorkerModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
     private String TAG = "WorkerManager";
@@ -37,9 +37,12 @@ public class WorkerModule extends ReactContextBaseJavaModule implements Lifecycl
 
     private ReactPackage additionalWorkerPackages[];
 
-    public WorkerModule(final ReactApplicationContext reactContext, ReactPackage additionalWorkerPackages[]) {
+    private ReactNativeHost reactNativeHost;
+
+    public WorkerModule(final ReactApplicationContext reactContext, ReactNativeHost reactNativeHost, ReactPackage additionalWorkerPackages[]) {
         super(reactContext);
         workers = new HashMap<>();
+        this.reactNativeHost = reactNativeHost;
         this.additionalWorkerPackages = additionalWorkerPackages;
         reactContext.addLifecycleEventListener(this);
     }
@@ -182,8 +185,7 @@ public class WorkerModule extends ReactContextBaseJavaModule implements Lifecycl
     }
 
     private ReactInstanceManager getReactInstanceManager() {
-        ReactApplication reactApplication = (ReactApplication)getCurrentActivity().getApplication();
-        return reactApplication.getReactNativeHost().getReactInstanceManager();
+        return reactNativeHost.getReactInstanceManager();
     }
 
     private DevSupportManager getDevSupportManager() {
